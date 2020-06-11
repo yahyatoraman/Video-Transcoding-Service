@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Video Transcoding</title>
+
+<style>
+
+input[type=number] {
+width: 210px;
+padding: 3px;
+}
+
+button {
+padding: 15px 60px;
+cursor: pointer;
+border-radius: 10px;
+}
+
+form {
+margin-left: 40%;
+margin-top: 4%;
+width: 17%;
+border: 3px solid red;
+border-radius: 20px;
+padding: 20px;
+}
+
+p {
+font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+	<form id="form" th:object="${chunkDto}" method="POST" enctype="multipart/form-data">
+	
+		<p> Upload the video: </p>
+		<input type="file" th:field="*{file}" >
+	
+		<p> Video formats: </p>
+		<div th:each="format: ${T(com.vts.domain.Enums.Format).values()}">
+			<input type="checkbox" class="formats" th:id="${format}"> <label
+				th:text="${format}"></label>
+		</div>
+
+		<p> Video resolutions: </p>
+		<div th:each="resolution: ${T(com.vts.domain.Enums.Resolution).values()}">
+			<input type="checkbox" class="resolutions" th:id="${resolution}">
+			<label th:text="${resolution}"></label>
+		</div>
+
+		<p> Chunk lengths (in seconds): </p>
+		<input type="number" th:field="*{interval}">
+
+		<p id="jsError" style="color: red;"></p>
+		<button type="button" onclick="processForm()">Start transcoding</button>
+		
+		<input type="hidden" th:field="*{formats}" id="formats" name="formats">
+		<input type="hidden" th:field="*{resolutions}" id="resolutions" name="resolutions"> 
+	</form>
+
+</body>
+
+<script>
+	function processForm() {
+
+		const formats = document.querySelectorAll('.formats');
+		const resolutions = document.querySelectorAll('.resolutions');
+
+		for (var i = 0, format; format = formats[i]; i++) {
+			if (format.checked) {
+				document.getElementById('formats').value += format.id + "/";
+			}
+		}
+
+		for (var j = 0, res; res = resolutions[j]; j++) {
+			if (res.checked) {
+				document.getElementById('resolutions').value += res.id + "/";
+			}
+		}
+
+		document.getElementById('form').submit();
+
+	}
+</script>
+
+
+
+</html>
